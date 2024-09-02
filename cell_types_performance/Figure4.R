@@ -65,8 +65,9 @@ simulationResults <- simulationResults[c(1, 3:10, 2),]
 
 meansimulation = rowMedians(as.matrix(simulationResults))
 SDsimulation = rowSds(as.matrix(simulationResults))
-rangeIQR <- colIQRs(as.matrix(simulationResults))
+rangeIQR <- rowIQRs(as.matrix(simulationResults))
 upperLim <- meansimulation + rangeIQR
+upperLim[upperLim > 1] <- 1
 lowerLim <- meansimulation - rangeIQR
 datLineplot <- cbind(meansimulation, upperLim, lowerLim)
 datLineplot <- data.frame(datLineplot)
