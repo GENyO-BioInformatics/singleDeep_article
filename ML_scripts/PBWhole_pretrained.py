@@ -2,7 +2,7 @@
 import argparse
 
 # Create an ArgumentParser object
-parser = argparse.ArgumentParser(description='Random Forest models for pseudobulk data')
+parser = argparse.ArgumentParser(description='Pretrained models for pseudobulk data')
 
 # Add parameters to the parser
 parser.add_argument('--inPath', type=str, help='Folder with the input data')
@@ -31,9 +31,15 @@ metadataSamples = pd.read_table(inPath + '/Phenodata.tsv')
 
 training_dict = torch.load(modelFile)
 
-
 expression = pd.read_table(inPath + '/pseudobulk_whole.tsv').transpose()
-prediction = training_dict['Model'].predict(expression)
+
+if 'FNN' in modelFile:
+    expression = np.array(expression.astype(np.float32))
+    prediction = training_dict['Model'].predict(expression)
+    expression = pd.read_table(inPath + '/pseudobulk_whole.tsv').transpose()
+else:
+    prediction = training_dict['Model'].predict(expression)
+
 for sample in range(len(prediction)):
     sampleName = expression.index[sample]
     labelsPredicted[sampleName] = prediction[sample]

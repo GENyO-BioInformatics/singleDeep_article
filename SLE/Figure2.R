@@ -17,7 +17,7 @@ package.check <- lapply(
 
 resultsTable <- read.delim("SLE/results_SLE/Status_testResults.tsv", row.names = 1)
 resultsInternal <- list()
-for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "DT")) {
+for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")) {
     resultsInternal[[MLModel]] <- read.delim(paste0("SLE/results_SLE/",
                                                       MLModel, "_Whole/testResults.tsv"),
                                                row.names = 1)
@@ -26,11 +26,11 @@ for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "DT")) {
 resultsInternal <- do.call(cbind, resultsInternal)
 perfMergedInternal <- data.frame(cbind(resultsTable, resultsInternal))
 perfMergedInternal["MCC",] <- (unlist(perfMergedInternal["MCC",]) + 1) / 2
-colnames(perfMergedInternal) <- c("singleDeep", "LR", "SVM", "RF", "KNN", "NB", "LDA", "DT")
+colnames(perfMergedInternal) <- c("singleDeep", "LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")
 
 
 dataBarplot <- stack(perfMergedInternal)
-dataBarplot$metric <- factor(rep(c("Accuracy", "Precision", "Recall", "F1", "normMCC"), 8))
+dataBarplot$metric <- factor(rep(c("Accuracy", "Precision", "Recall", "F1", "normMCC"), 9))
 
 p <- ggplot(dataBarplot, aes(x=factor(metric, c("normMCC", "Accuracy", "Precision", "Recall", "F1")), y=values, fill=ind)) +
     geom_bar(position = "dodge", stat = "identity", color = "black") +
@@ -63,7 +63,7 @@ rownames(resultsTable) <- resultsTable[,1]
 resultsTable <- resultsTable[,-1, drop=F]
 
 resultsExternal <- list()
-for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "DT")) {
+for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")) {
     validation_predictions <- read.delim(paste0("SLE/results_SLE/", MLModel, "_Whole/pediatrics_prediction.tsv"), row.names = 1)
     validation_predictions$real <- validation_real[rownames(validation_predictions), "StatusInt"]
     resultsModel <- metrics_summary(obs = validation_predictions$real,
@@ -77,10 +77,10 @@ for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "DT")) {
 resultsExternal <- do.call(cbind, resultsExternal)
 perfMergedExternal <- data.frame(cbind(resultsTable, resultsExternal))
 perfMergedExternal["mcc",] <- (unlist(perfMergedExternal["mcc",]) + 1) / 2
-colnames(perfMergedExternal) <- c("singleDeep",  "LR", "SVM", "RF", "KNN", "NB", "LDA", "DT")
+colnames(perfMergedExternal) <- c("singleDeep",  "LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")
 
 dataBarplot <- stack(perfMergedExternal)
-dataBarplot$metric <- factor(rep(c("Accuracy", "Precision", "Recall", "F1", "normMCC"), 8))
+dataBarplot$metric <- factor(rep(c("Accuracy", "Precision", "Recall", "F1", "normMCC"), 9))
 
 p <- ggplot(dataBarplot, aes(x=factor(metric, c("normMCC", "Accuracy", "Precision", "Recall", "F1")), y=values, fill=ind)) +
     geom_bar(position = "dodge", stat = "identity", color = "black") +
