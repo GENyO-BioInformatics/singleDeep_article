@@ -12,7 +12,7 @@ package.check <- lapply(
 )
 
 
-# Correlation performance, # Cells and cell types ratio - Figure 4a -------
+# Correlation performance, # Cells and cell types ratio - Figure 3a -------
 
 MCCClust <- read.delim("SLE/results_SLE/Status_clusterResults.tsv", row.names = 1)[,"MCC",drop=F]
 cellTypes <- rownames(MCCClust)[order(MCCClust$MCC, decreasing = T)]
@@ -45,11 +45,11 @@ p <- ggplot(df, aes(x = x, y = y, fill = N)) +
     scale_fill_gradient(low = "yellow", high = "red") +
     labs(fill = "Healthy/SLE ratio")
 
-ggsave("figures/figure4a.pdf", p, scale=2.5, width = 2.05, height = 1.5)
+ggsave("figures/figure3a.pdf", p, scale=2.5, width = 2.05, height = 1.5)
 
 
 
-# In silico analysis - Figure 4b ------------------------------------------
+# In silico analysis - Figure 3b ------------------------------------------
 
 iterationsList <- as.character(seq(10))
 simulationResults <- list()
@@ -81,10 +81,10 @@ p <- ggplot(datLineplot) + aes(x=ind, y=meansimulation, ymin=lowerLim, ymax=uppe
     theme_classic() +
     theme(legend.title = element_blank(), text=element_text(size=16))
 
-ggsave("figures/figure4b.pdf", p, scale=2.5, width = 2.05, height = 1.5)
+ggsave("figures/figure3b.pdf", p, scale=2.5, width = 2.05, height = 1.5)
 
 
-# Ablation analysis - Figure 4c -------------------------------------------
+# Ablation analysis - Figure 3c -------------------------------------------
 
 NCellsList <- paste(c("30000", "25000", "20000", "15000", "10000", "5000"), rep(seq(10), each=6), sep = "_")
 NCellsResults <- list()
@@ -123,4 +123,4 @@ p <- ggplot(melted_NCellsResults, aes(x = Var1, y = value, group = Var2, color =
     guides(color="none")+
     theme(text=element_text(size=16))
 
-ggsave("figures/figure4c.pdf", p, scale=2.5, width = 2.05, height = 1.5)
+ggsave("figures/figure3c.pdf", p, scale=2.5, width = 2.05, height = 1.5)

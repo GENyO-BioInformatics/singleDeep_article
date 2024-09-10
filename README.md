@@ -16,7 +16,7 @@ pip install -r singleDeep/requirements.txt
 Create the necessary directories.
 
 ```{bash}
-mkdir SLE/data/Science figures false_discoveries/data cell_types_performance/ablation
+mkdir SLE/data/Science figures
 ```
 
 ## Systemic Lupus Erythematosus (SLE) diagnosis
@@ -69,36 +69,6 @@ RScript SLE/Figure2.R
 
 Figure 2 panels will be saved in the figures folder.
 
-## False discoveries study
-
-For this section, in addition to the SLE data processed in previous sections, a dataset without applying gene expression scaling must be generated. For that aim, the following command must be used:
-
-```{bash}
-python false_discoveries/process_Science_pediatrics_NoScaled.py
-```
-
-This will save the processed file *false_discoveries/science_NoScaled.h5ad*. It has to be prepared for singleDeep:
-
-``` bash
-Rscript singleDeep/PrepareData.R --inputPath false_discoveries/data/science_NoScaled.h5ad --fileType scanpy --sampleColumn ind_cov --clusterColumn cg_cov --clinicalColumns Status --targetColumn Status --maxCells 30000 --filterGenes --outPath false_discoveries/science_NoScaled/
-```
-
-Now, run singleDeep with local (default) and global contributions estimation for both datasets.
-
-``` bash
-python singleDeep/singleDeep.py --inPath SLE/data/SLE_Science --sampleColumn ind_cov --logPath SLE/log_SLE --resultsPath false_discoveries/results_Scaled_global/ --varColumn Status --num_epochs 500 --resultsFilenames Status --KOuter 5 --KInner 4 --saveModel --contributions global
-
-python singleDeep/singleDeep.py --inPath false_discoveries/science_NoScaled/ --sampleColumn ind_cov --logPath SLE/log_SLE --resultsPath false_discoveries/results_NoScaled_local/ --varColumn Status --num_epochs 500 --resultsFilenames Status --KOuter 5 --KInner 4 --saveModel
-
-python singleDeep/singleDeep.py --inPath false_discoveries/science_NoScaled/ --sampleColumn ind_cov --logPath SLE/log_SLE --resultsPath false_discoveries/results_NoScaled_global/ --varColumn Status --num_epochs 500 --resultsFilenames Status --KOuter 5 --KInner 4 --saveModel --contributions global
-```
-
-Finally, generate Figure 3 from the results.
-
-```{bash}
-Rscript false_discoveries/Figure3.R
-```
-
 ## Factors influencing cell types performance
 
 #### In silico analysis
@@ -106,64 +76,34 @@ Rscript false_discoveries/Figure3.R
 Run the script simulation/simulation.R to generate 10 synthetic scRNA-Seq datasets, each one with 10 groups (aka cell types) with decreasing differential expression between conditions.
 
 ```{bash}
-Rscript simulation/simulation.R
+Rscript cell_types_performance/simulation.R
 ```
 
-The folder simulation/data will contain the simulated datasets. The folder simulation/results_simulation_n\_x will contain the singleDeep results for dataset x. Figure 3a will be saved in the figures folder.
+The folder simulation/data will contain the simulated datasets. The folder simulation/results_simulation_n_x will contain the singleDeep results for dataset x. Figure 3a will be saved in the figures folder.
 
 #### Ablation analysis
 
 Run the following script to generate subsets of the SLE Science dataset with different number of cells:
 
 ```{bash}
-bash ablation/prepare_ablation.sh
+bash cell_types_performance/prepare_ablation.sh
 ```
 
 Run singleDeep for each dataset (you may use a computational cluster to parallel this process):
 
 ```{bash}
-bash ablation/run_ablation.sh
+bash cell_types_performance/run_ablation.sh
 ```
 
 The results for each dataset will be stored in the ablation folder.
 
-To generate the Figure 4 from this section results, run:
+To generate the Figure 3 from this section results, run:
 
 ```{bash}
-Rscript cell_types_performance/Figure4.R
+Rscript cell_types_performance/Figure3.R
 ```
 
-Figure 4a, 4b and 4c will be saved in the figures folder.
-
-## COVID-19
-
-Download the file *COVID19_ALL.h5ad.tar.gz* from <https://explore.data.humancellatlas.org/projects/5f607e50-ba22-4598-b1e9-f3d9d7a35dcc/project-matrices>. Decompress and store it into the *COVID* folder. Now run COVID/process_COVID.py to select the highly variable genes and scale the data.
-
-```{bash}
-python COVID/process_COVID.py
-```
-
-This script will create the processed file *COVID/COVID19_processed.h5ad*. The next step is to prepare the dataset for singleDeep.
-
-``` bash
-Rscript singleDeep/PrepareData.R --inputPath ./COVID/COVID19_processed.h5ad --fileType scanpy --sampleColumn sampleID --clusterColumn celltype --clinicalColumns 'CoVID-19 severity,Sample type,SARS-CoV-2,Outcome' --targetColumn 'CoVID-19 severity' --minCells 1000 --maxCells 30000 --filterGenes --outPath ./COVID/data
-```
-
-Run the analyses with singleDeep for severity and status prediction.
-
-``` bash
-python singleDeep/singleDeep.py --inPath ./COVID/data/ --sampleColumn sampleID --logPath ./COVID/log_COVID --resultsPath ./COVID/results_COVID/ --varColumn CoVID-19_severity --targetClass 2 --num_epochs 500 --resultsFilenames Severity --KOuter 3 --KInner 3
-```
-
-``` bash
-python singleDeep/singleDeep.py --inPath ./COVID/data/ --sampleColumn sampleID --logPath ./COVID/log_COVIDStatus --resultsPath ./COVID/results_COVIDStatus/ --varColumn SARS-CoV-2 --targetClass 1 --num_epochs 500 --resultsFilenames Status --KOuter 3 --KInner 3
-```
-
-Run the script *COVID/Figure5.R* to generate the Figure 5 into the figures folder:
-
-``` bash
-Rscript COVID/Figure5.R
-```
+Figure 3a, 3b and 3c will be saved in the figures folder.
 
 ## Dementia
 
@@ -191,10 +131,40 @@ Prepare the data for plotting:
 Rscript Dementia/preparePlot.R
 ```
 
-Run the script *Dementia/Figure6.py* to generate the Figure 6 into the figures folder:
+Run the script *Dementia/Figure4.py* to generate the Figure 4 into the figures folder:
 
 ``` bash
-python Dementia/Figure6.py
+python Dementia/Figure4.py
+```
+
+## COVID-19 (Supplementary use case)
+
+Download the file *COVID19_ALL.h5ad.tar.gz* from <https://explore.data.humancellatlas.org/projects/5f607e50-ba22-4598-b1e9-f3d9d7a35dcc/project-matrices>. Decompress and store it into the *COVID* folder. Now run COVID/process_COVID.py to select the highly variable genes and scale the data.
+
+```{bash}
+python COVID/process_COVID.py
+```
+
+This script will create the processed file *COVID/COVID19_processed.h5ad*. The next step is to prepare the dataset for singleDeep.
+
+``` bash
+Rscript singleDeep/PrepareData.R --inputPath ./COVID/COVID19_processed.h5ad --fileType scanpy --sampleColumn sampleID --clusterColumn celltype --clinicalColumns 'CoVID-19 severity,Sample type,SARS-CoV-2,Outcome' --targetColumn 'CoVID-19 severity' --minCells 1000 --maxCells 30000 --filterGenes --outPath ./COVID/data
+```
+
+Run the analyses with singleDeep for severity and status prediction.
+
+``` bash
+python singleDeep/singleDeep.py --inPath ./COVID/data/ --sampleColumn sampleID --logPath ./COVID/log_COVID --resultsPath ./COVID/results_COVID/ --varColumn CoVID-19_severity --targetClass 2 --num_epochs 500 --resultsFilenames Severity --KOuter 3 --KInner 3
+```
+
+``` bash
+python singleDeep/singleDeep.py --inPath ./COVID/data/ --sampleColumn sampleID --logPath ./COVID/log_COVIDStatus --resultsPath ./COVID/results_COVIDStatus/ --varColumn SARS-CoV-2 --targetClass 1 --num_epochs 500 --resultsFilenames Status --KOuter 3 --KInner 3
+```
+
+Run the script *COVID/SupplementaryFigure1.R* to generate the Supplementary Figure 1a and 1b into the figures folder:
+
+``` bash
+Rscript COVID/SupplementaryFigure1.R
 ```
 
 ## 

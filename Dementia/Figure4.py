@@ -38,8 +38,8 @@ for cellType in cellTypes:
 
 
 sc.set_figure_params(dpi_save=300, figsize=(6,6), format="tiff")
-sc.pl.scatter(adata, basis="umap", color='cell_type', save="figures/figure6a",  palette='tab20', show=False, title = "Cell types", size=0.4)
-sc.pl.umap(adata, color='MCC', color_map="viridis_r", save="figures/figure6b",  show=False, title='MCC', size=0.4)
-sc.pl.umap(adata, color='APOEContr', color_map="plasma_r", save="figures/figure6c",  show=False, title='APOE Healthy', size=0.4, na_color="lightgray", colorbar_loc=None)
-sc.pl.umap(adata, color='APOC1ContrDementia', color_map="plasma_r", save="figures/figure6d",  show=False, title='APOC1 Dementia', size=0.4, na_color="lightgray", colorbar_loc=None)
-sc.pl.umap(adata, color='SPP1ContrDementia', color_map="plasma_r", save="figures/figure6e",  show=False, title='SPP1 Dementia', size=0.4, na_color="lightgray", colorbar_loc=None)
+sc.pl.scatter(adata, basis="umap", color='cell_type', save="figures/figure4a",  palette='tab20', show=False, title = "Cell types", size=0.4)
+sc.pl.umap(adata, color='MCC', color_map="viridis_r", save="figures/figure4b",  show=False, title='MCC', size=0.4)
+sc.pl.umap(adata, color='APOEContr', color_map="plasma_r", save="figures/figure4c",  show=False, title='APOE Healthy', size=0.4, na_color="lightgray", colorbar_loc=None)
+sc.pl.umap(adata, color='APOC1ContrDementia', color_map="plasma_r", save="figures/figure4d",  show=False, title='APOC1 Dementia', size=0.4, na_color="lightgray", colorbar_loc=None)
+sc.pl.umap(adata, color='SPP1ContrDementia', color_map="plasma_r", save="figures/figure4e",  show=False, title='SPP1 Dementia', size=0.4, na_color="lightgray", colorbar_loc=None)

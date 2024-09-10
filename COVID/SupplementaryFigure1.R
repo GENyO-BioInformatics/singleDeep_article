@@ -10,7 +10,7 @@ package.check <- lapply(
     }
 )
 
-# Bubble plot of gene contributions across cell types - Figure 5a -------------
+# Bubble plot of gene contributions across cell types - Supplementary Figure 1a -------------
 
 MCCClust <- read.delim("COVID/results_COVIDPBMCStatus/Status_clusterResults.tsv", row.names = 1)[,"MCC",drop=F]
 cellTypes <- rownames(MCCClust)[order(MCCClust$MCC, decreasing = T)]
@@ -86,10 +86,10 @@ p <- ggplot(df1, aes(x=cellTypesTop, y=selectedGenes, size=Rank, color=Sign)) +
           axis.title.x = element_blank(), axis.title.y = element_blank(),
           legend.position="top")
 
-ggsave("figures/figure5a.pdf", p, width=1200, height=1200, units="px", scale=5)
+ggsave("figures/SupplementaryFigure1a.pdf", p, width=1200, height=1200, units="px", scale=5)
 
 
-# Enrichment analysis - Figure 5b -----------------------------------------
+# Enrichment analysis - Supplementary Figure 1b -----------------------------------------
 
 genesEnrichment <- c()
 
@@ -136,4 +136,4 @@ p <- ggplot(enrichmentResults, aes(x=logp, y=description, color=relative_enrichm
     theme(text = element_text(size = 30),
           legend.position="top")
 
-ggsave("figures/figure5b.pdf", p, width=1000, height=1200, units="px", scale=5)
+ggsave("figures/SupplementaryFigure1b.pdf", p, width=1000, height=1200, units="px", scale=5)

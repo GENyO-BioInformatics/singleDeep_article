@@ -82,7 +82,7 @@ for (iteration in seq(10)) {
 # Run singleDeep ----------------------------------------------------------
 for (iteration in seq(10)) {
     fileName <- paste0("simulation_", iteration)
-    commandSingleDeep <- paste0("python3.8 singleDeep/singleDeep.py --inPath cell_types_performance/dataSimulation/",
+    commandSingleDeep <- paste0("python singleDeep/singleDeep.py --inPath cell_types_performance/dataSimulation/",
                                 fileName, " --sampleColumn Sample --logPath cell_types_performance/log --resultsPath cell_types_performance/results_simulation/results_",
                                 fileName, "/ --varColumn Condition --num_epochs 250 --resultsFilenames Condition --KOuter 5 --KInner 4 --lr 0.01")
     system(commandSingleDeep)
