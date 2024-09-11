@@ -47,7 +47,7 @@ p <- ggplot(dataBarplot, aes(x=factor(metric, c("normMCC", "Accuracy", "Precisio
 ggsave("figures/figure2a.pdf", p, scale=1.2, width = 3.5, height = 2.4)
 
 
-# External validation - Figure 2b -----------------------------------------
+# External validation - Table 1 -----------------------------------------
 
 validation_predictions <- read.delim("SLE/results_SLE/validation_predictions.tsv", row.names = 1)
 validation_real <- read.delim("SLE/data/SLE_pediatrics/Phenodata.tsv")
@@ -61,6 +61,7 @@ resultsTable <- metrics_summary(obs = validation_predictions$real,
                                 metrics_list = metrics)
 rownames(resultsTable) <- resultsTable[,1]
 resultsTable <- resultsTable[,-1, drop=F]
+resultsTable["normMCC",] <- (resultsTable["mcc",] + 1) / 2
 
 resultsExternal <- list()
 for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")) {
@@ -72,32 +73,22 @@ for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")) {
                                     metrics_list = metrics)
     rownames(resultsModel) <- resultsModel[,1]
     resultsModel <- resultsModel[,-1, drop=F]
+    resultsModel["normMCC",] <- (resultsModel["mcc",] + 1) / 2
     resultsExternal[[MLModel]] <- resultsModel
 }
+resultsExternal[["CloudPred"]] <- read.delim("./Cloudpred/results_validation_Cloudpred.txt", row.names = 1)
+resultsExternal[["ProtoCell4P"]] <- read.delim("./ProtoCell4P/results_validation_Protocell4P.txt", row.names = 1)
+resultsExternal[["ScRAT"]] <- read.delim("./scRAT/results_validation_scRAT.txt", row.names = 1)
 resultsExternal <- do.call(cbind, resultsExternal)
 perfMergedExternal <- data.frame(cbind(resultsTable, resultsExternal))
-perfMergedExternal["mcc",] <- (unlist(perfMergedExternal["mcc",]) + 1) / 2
-colnames(perfMergedExternal) <- c("singleDeep",  "LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")
+colnames(perfMergedExternal) <- c("singleDeep",  "LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT", "CloudPred", "ProtoCell4P", "ScRAT")
+rownames(perfMergedExternal) <- c("Accuracy", "Precision", "Recall", "F1", "MCC", "normMCC")
+perfMergedExternal <- perfMergedExternal[c("MCC", "Accuracy", "Precision", "Recall", "F1"), 
+                                         c("singleDeep", "CloudPred", "ProtoCell4P", "ScRAT", "LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")]
 
-dataBarplot <- stack(perfMergedExternal)
-dataBarplot$metric <- factor(rep(c("Accuracy", "Precision", "Recall", "F1", "normMCC"), 9))
+write.table(round(perfMergedExternal, 2), "SLE/Table1.tsv", sep = "\t", quote = F, col.names = NA)
 
-p <- ggplot(dataBarplot, aes(x=factor(metric, c("normMCC", "Accuracy", "Precision", "Recall", "F1")), y=values, fill=ind)) +
-    geom_bar(position = "dodge", stat = "identity", color = "black") +
-    xlab("Metric") +
-    ylab("Value") +
-    theme_classic() +
-    ylim(0,1) +
-    scale_fill_jco() +
-    labs(fill="Method") +
-    theme(legend.position = "top", legend.key.size = unit(0.02, "npc"),
-          legend.text = element_text(size=8),
-          legend.title = element_text(size=8))
-
-ggsave("figures/figure2b.pdf", p, scale=1.2, width = 3.5, height = 2.4)
-
-
-# singleDeep performance by cell type - Figure 2c -------------------------
+# singleDeep performance by cell type - Figure 2b -------------------------
 
 MCCClust <- read.delim("SLE/results_SLE/Status_clusterResults.tsv", row.names = 1)[,"MCC",drop=F]
 cellTypes <- rownames(MCCClust)[order(MCCClust$MCC, decreasing = T)]
@@ -131,10 +122,10 @@ p <- ggplot(dat, aes(x=ind, y=values, fill=values)) +
     theme_classic() +
     theme(legend.position = "none", axis.text.x=element_text(angle=90, vjust=0.5, hjust = 0.95))
 
-ggsave("figures/figure2c.pdf", p, scale=1.2, width = 3.5, height = 2.6)
+ggsave("figures/figure2b.pdf", p, scale=1.2, width = 3.5, height = 2.6)
 
 
-# Heatmap of gene contributions across cell types - Figure 2d -------------
+# Heatmap of gene contributions across cell types - Figure 2c -------------
 
 pseudobulkSLE <- read.delim("SLE/data/Science/pseudobulk_Science_raw_sum.tsv", check.names = F, row.names = 1)
 
@@ -186,5 +177,5 @@ for (cellType in cellTypesTop) {
 
 pheatmap(-genesSLERank[selectedGenes,], cluster_cols = F, cluster_rows = F,
          color = paletteer_d("beyonce::X39"), border_color = "black",
-         angle_col = 90, width = 2.8, height = 7.15, legend = F, fontsize = 8,
-         filename = "figures/figure2d.pdf")
+         angle_col = 90, width = 2.5, height = 4.93, legend = F, fontsize = 7,
+         filename = "figures/figure2c.pdf")
