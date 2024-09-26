@@ -119,7 +119,7 @@ net = NeuralNetClassifier(
     batch_size=10,
     # Shuffle training data on each epoch
     iterator_train__shuffle=True,
-    device='cuda',
+    device='cpu',
 )
 # X = np.array(expression).astype(np.float32)
 # y = np.array(metadata["LabelInt"])
@@ -163,7 +163,7 @@ for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, m
         batch_size=best_params['batch_size'],
         # Shuffle training data on each epoch
         train_split=None,
-        device='cuda'
+        device='cpu'
     )
     _ = best_model.fit(X_train, y_train)
     y_pred = best_model.predict(X_test)
@@ -184,7 +184,7 @@ modelCluster = best_model = NeuralNetClassifier(
     batch_size=best_params['batch_size'],
     # Shuffle training data on each epoch
     train_split=None,
-    device='cuda',
+    device='cpu',
 )
 _ = modelCluster.fit(np.array(expression.astype(np.float32)), metadata["LabelInt"])
 
@@ -199,9 +199,9 @@ labelsReal = metadataSamples["LabelInt"].loc[list(testPredictions.keys())]
 x = list(labelsReal)
 y = list(testPredictions.values())
 test_Results = {'accuracy': metr.accuracy_score(x, y),
-               'precision': metr.precision_score(x, y, average='macro'),
-               'recall': metr.recall_score(x, y, average='macro'),
-               'f1': metr.f1_score(x, y, average='macro'),
+               'precision': metr.precision_score(x, y),
+               'recall': metr.recall_score(x, y),
+               'f1': metr.f1_score(x, y),
                'MCC': matthews_corrcoef(x, y)}
 
 ######################

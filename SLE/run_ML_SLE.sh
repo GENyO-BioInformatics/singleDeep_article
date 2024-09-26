@@ -9,7 +9,7 @@ Rscript ML_scripts/Pseudobulk.R --inputPath SLE/data/SLE_pediatrics/ --sampleCol
 ### Run models  ###
 ###################
 
-algorithms=("DT" "KNN" "LDA" "LR" "NB" "RF" "SVM")
+algorithms=("DT" "KNN" "LDA" "LR" "NB" "RF" "SVM" "FNN")
 
 for algorithm in "${algorithms[@]}"; do
     # Training and internal validation with pseudobulk

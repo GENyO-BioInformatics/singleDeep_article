@@ -137,9 +137,9 @@ labelsReal = metadataSamples["LabelInt"].loc[list(testPredictions.keys())]
 x = list(labelsReal)
 y = list(testPredictions.values())
 test_Results = {'accuracy': metr.accuracy_score(x, y),
-               'precision': metr.precision_score(x, y, average='macro'),
-               'recall': metr.recall_score(x, y, average='macro'),
-               'f1': metr.f1_score(x, y, average='macro'),
+               'precision': metr.precision_score(x, y),
+               'recall': metr.recall_score(x, y),
+               'f1': metr.f1_score(x, y),
                'MCC': matthews_corrcoef(x, y)}
 
 ######################
