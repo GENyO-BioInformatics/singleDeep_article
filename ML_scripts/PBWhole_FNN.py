@@ -117,14 +117,11 @@ net = NeuralNetClassifier(
     criterion=nn.CrossEntropyLoss,
     lr=0.1,
     batch_size=10,
-    # Shuffle training data on each epoch
-    iterator_train__shuffle=True,
+    train_split=None,
+    # iterator_train__shuffle=True,
     device='cpu',
 )
-# X = np.array(expression).astype(np.float32)
-# y = np.array(metadata["LabelInt"])
-# net.fit(X, y)
-# y_pred = net.predict(X)
+
 
 param_grid = {
     'lr': [0.1, 0.01, 0.001, 0.0001, 0.00001], 
@@ -132,6 +129,10 @@ param_grid = {
     'max_epochs': range(10, 310, 20), 
 }
 
+# Fix seed
+np.random.seed(0)
+torch.manual_seed(0)
+    
 # Outer stratified cross-validation loop
 for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, metadata["LabelInt"].tolist())):
     X_train, X_test = np.array(expression.iloc[train_index].astype(np.float32)), np.array(expression.iloc[test_index].astype(np.float32))
@@ -147,6 +148,7 @@ for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, m
     )
     
     # Fit the random search on the inner training data
+    torch.manual_seed(0)
     _ = random_search.fit(X_train, y_train)
     
     # Obtain the best parameters and score
@@ -165,6 +167,8 @@ for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, m
         train_split=None,
         device='cpu'
     )
+    
+    torch.manual_seed(0)
     _ = best_model.fit(X_train, y_train)
     y_pred = best_model.predict(X_test)
     for sample in range(len(y_pred)):
@@ -176,7 +180,7 @@ for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, m
 # Hyperparameters are the ones from the fold with the best performance
 bestFold = MCCs.index(max(MCCs))
 best_params = best_params_dict[bestFold]
-modelCluster = best_model = NeuralNetClassifier(
+modelCluster = NeuralNetClassifier(
     NeuralNetwork(layer1, layer2, layer3, layer4, outNeurons = outNeurons, nGenes = nGenes),
     max_epochs=best_params['max_epochs'],
     criterion=nn.CrossEntropyLoss,
@@ -186,8 +190,9 @@ modelCluster = best_model = NeuralNetClassifier(
     train_split=None,
     device='cpu',
 )
-_ = modelCluster.fit(np.array(expression.astype(np.float32)), metadata["LabelInt"])
 
+torch.manual_seed(0)
+_ = modelCluster.fit(np.array(expression.astype(np.float32)), metadata["LabelInt"])
 trainedModels['Model'] = _
 
 

@@ -21,9 +21,32 @@ sampleColumn = args.sampleColumn
 
 # Import libraries
 import pandas as pd
+import numpy as np
 import glob
 import itertools
 import torch
+from torch import nn
+
+# Network class
+class NeuralNetwork(nn.Module):
+    def __init__(self, Hs1, Hs2, Hs3, Hs4, outNeurons, nGenes):
+        super(NeuralNetwork, self).__init__()
+        self.linear_relu_stack = nn.Sequential(
+            nn.Linear(nGenes, Hs1),
+            nn.ReLU(), # ReLU activation function
+            nn.Linear(Hs1, Hs2),
+            nn.ReLU(),
+            nn.Linear(Hs2, Hs3),
+            nn.ReLU(),
+            nn.Linear(Hs3, Hs4),
+            nn.ReLU(),
+            nn.Linear(Hs4, outNeurons),
+        )
+
+    def forward(self, x):
+        logits = self.linear_relu_stack(x)
+        return logits
+
 
 labelsPredicted = {}
 

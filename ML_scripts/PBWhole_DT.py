@@ -73,7 +73,7 @@ param_grid = {
     'max_depth': [None, 10, 20, 30, 40, 50],
     'min_samples_split': [2, 5, 10],
     'min_samples_leaf': [1, 2, 4],
-    'max_features': ['auto', 'sqrt', 'log2', None],
+    'max_features': ['sqrt', 'log2', None],
 }
 
 # Read files
@@ -96,7 +96,7 @@ for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, m
     inner_cv = StratifiedKFold(n_splits=KInner, shuffle=True, random_state=123)
     
     # Randomized search for hyperparameter tuning
-    dt_model = DecisionTreeClassifier(class_weight="balanced")
+    dt_model = DecisionTreeClassifier(class_weight="balanced", random_state=123)
     random_search = RandomizedSearchCV(
         dt_model, param_grid, n_iter=100, scoring=make_scorer(matthews_corrcoef), cv=inner_cv, n_jobs=cores,
         random_state=123
@@ -111,7 +111,7 @@ for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, m
     MCCs.append(random_search.best_score_)
     
     # Build a new model using the best parameters and evaluate on the outer test data
-    best_model = DecisionTreeClassifier(**best_params, class_weight="balanced")
+    best_model = DecisionTreeClassifier(**best_params, class_weight="balanced", random_state=123)
     _ = best_model.fit(X_train, y_train)
     y_pred = best_model.predict(X_test)
     for sample in range(len(y_pred)):
@@ -123,7 +123,7 @@ for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, m
 # Hyperparameters are the ones from the fold with the best performance
 bestFold = MCCs.index(max(MCCs))
 best_params = best_params_dict[bestFold]
-modelCluster = DecisionTreeClassifier(**best_params, class_weight="balanced")
+modelCluster = DecisionTreeClassifier(**best_params, class_weight="balanced", random_state=123)
 _ = modelCluster.fit(expression, metadata["LabelInt"].tolist())
 
 trainedModels['Model'] = _

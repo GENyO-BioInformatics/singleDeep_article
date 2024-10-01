@@ -94,9 +94,9 @@ for foldOut, (train_index, test_index) in enumerate(outer_cv.split(expression, m
     inner_cv = StratifiedKFold(n_splits=KInner, shuffle=True, random_state=123)
     
     # Randomized search for hyperparameter tuning
-    lda_model = KNeighborsClassifier()
+    knn_model = KNeighborsClassifier()
     random_search = RandomizedSearchCV(
-        lda_model, param_grid, n_iter=100, scoring=make_scorer(matthews_corrcoef), cv=inner_cv, n_jobs=cores,
+        knn_model, param_grid, n_iter=100, scoring=make_scorer(matthews_corrcoef), cv=inner_cv, n_jobs=cores,
         random_state=123
     )
     
