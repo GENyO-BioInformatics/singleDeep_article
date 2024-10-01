@@ -1,0 +1,7 @@
+	scRAT
+Accuracy	0.857143
+Precision	0.8952207
+Recall	0.9075
+F1	0.9006055
+MCC	0.6496321
+normMCC	0.82481605

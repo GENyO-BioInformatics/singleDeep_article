@@ -1,0 +1,7 @@
+	ProtoCell4P_16Prototypes
+Accuracy	0.823
+Precision	0.889
+Recall	0.861
+F1	0.875
+MCC	0.577
+normMCC	0.7885

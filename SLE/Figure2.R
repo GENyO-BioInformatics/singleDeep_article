@@ -17,7 +17,7 @@ package.check <- lapply(
 
 resultsTable <- read.delim("SLE/results_SLE/Status_testResults.tsv", row.names = 1)
 resultsInternal <- list()
-for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")) {
+for (MLModel in c("SVM", "FNN", "RF", "LDA", "KNN", "LR", "DT", "NB")) {
     resultsInternal[[MLModel]] <- read.delim(paste0("SLE/results_SLE/",
                                                       MLModel, "_Whole/testResults.tsv"),
                                                row.names = 1)
@@ -26,7 +26,7 @@ for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")) {
 resultsInternal <- do.call(cbind, resultsInternal)
 perfMergedInternal <- data.frame(cbind(resultsTable, resultsInternal))
 perfMergedInternal["MCC",] <- (unlist(perfMergedInternal["MCC",]) + 1) / 2
-colnames(perfMergedInternal) <- c("singleDeep", "LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")
+colnames(perfMergedInternal) <- c("singleDeep", "SVM", "FNN",  "RF", "LDA", "KNN", "LR", "DT", "NB")
 
 
 dataBarplot <- stack(perfMergedInternal)
@@ -57,34 +57,34 @@ validation_predictions$real <- validation_real[rownames(validation_predictions),
 metrics <- c("accuracy", "precision", "recall", "fscore", "mcc")
 resultsTable <- metrics_summary(obs = validation_predictions$real,
                                 pred = validation_predictions$label_predicted, 
-                                type="classification", pos_level = "1",
+                                type="classification", pos_level = 2,
                                 metrics_list = metrics)
 rownames(resultsTable) <- resultsTable[,1]
 resultsTable <- resultsTable[,-1, drop=F]
 resultsTable["normMCC",] <- (resultsTable["mcc",] + 1) / 2
 
 resultsExternal <- list()
-for (MLModel in c("LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")) {
+for (MLModel in c("SVM", "FNN",  "RF", "LDA", "KNN", "LR", "DT", "NB")) {
     validation_predictions <- read.delim(paste0("SLE/results_SLE/", MLModel, "_Whole/pediatrics_prediction.tsv"), row.names = 1)
     validation_predictions$real <- validation_real[rownames(validation_predictions), "StatusInt"]
     resultsModel <- metrics_summary(obs = validation_predictions$real,
                                     pred = validation_predictions$label_predicted, 
-                                    type="classification", pos_level = "1",
+                                    type="classification", pos_level = 2,
                                     metrics_list = metrics)
     rownames(resultsModel) <- resultsModel[,1]
     resultsModel <- resultsModel[,-1, drop=F]
     resultsModel["normMCC",] <- (resultsModel["mcc",] + 1) / 2
     resultsExternal[[MLModel]] <- resultsModel
 }
-resultsExternal[["CloudPred"]] <- read.delim("./Cloudpred/results_validation_Cloudpred.txt", row.names = 1)
-resultsExternal[["ProtoCell4P"]] <- read.delim("./ProtoCell4P/results_validation_Protocell4P.txt", row.names = 1)
-resultsExternal[["ScRAT"]] <- read.delim("./scRAT/results_validation_scRAT.txt", row.names = 1)
+resultsExternal[["CloudPred"]] <- read.delim("./SLE/scMethods/results_validation_Cloudpred.txt", row.names = 1)
+resultsExternal[["ProtoCell4P"]] <- read.delim("./SLE/scMethods/results_validation_Protocell4P.txt", row.names = 1)
+resultsExternal[["ScRAT"]] <- read.delim("./SLE/scMethods/results_validation_scRAT.txt", row.names = 1)
 resultsExternal <- do.call(cbind, resultsExternal)
 perfMergedExternal <- data.frame(cbind(resultsTable, resultsExternal))
-colnames(perfMergedExternal) <- c("singleDeep",  "LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT", "CloudPred", "ProtoCell4P", "ScRAT")
+colnames(perfMergedExternal) <- c("singleDeep",  "SVM", "FNN",  "RF", "LDA", "KNN", "LR", "DT", "NB", "CloudPred", "ProtoCell4P", "ScRAT")
 rownames(perfMergedExternal) <- c("Accuracy", "Precision", "Recall", "F1", "MCC", "normMCC")
-perfMergedExternal <- perfMergedExternal[c("MCC", "Accuracy", "Precision", "Recall", "F1"), 
-                                         c("singleDeep", "CloudPred", "ProtoCell4P", "ScRAT", "LR", "SVM", "RF", "KNN", "NB", "LDA", "FNN", "DT")]
+perfMergedExternal <- perfMergedExternal[c("MCC", "normMCC", "Accuracy", "Precision", "Recall", "F1"), 
+                                         c("singleDeep", "CloudPred", "ProtoCell4P", "ScRAT", "SVM", "FNN",  "RF", "LDA", "KNN", "LR", "DT", "NB")]
 
 write.table(round(perfMergedExternal, 2), "SLE/Table1.tsv", sep = "\t", quote = F, col.names = NA)
 
