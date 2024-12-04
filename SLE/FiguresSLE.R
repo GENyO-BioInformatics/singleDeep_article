@@ -13,7 +13,7 @@ package.check <- lapply(
 )
 
 
-# Internal validation - Figure 2a -----------------------------------------
+# Internal validation - Supplementary Figure 1a -----------------------------------------
 
 resultsTable <- read.delim("SLE/results_SLE/Status_testResults.tsv", row.names = 1)
 resultsInternal <- list()
@@ -44,7 +44,7 @@ p <- ggplot(dataBarplot, aes(x=factor(metric, c("normMCC", "Accuracy", "Precisio
           legend.text = element_text(size=8),
           legend.title = element_text(size=8))
 
-ggsave("figures/figure2a.pdf", p, scale=1.2, width = 3.5, height = 2.4)
+ggsave("figures/SupplFigure1a.pdf", p, scale=1.2, width = 3.5, height = 2.4)
 
 
 # External validation - Table 1 -----------------------------------------
@@ -56,7 +56,7 @@ validation_predictions$real <- validation_real[rownames(validation_predictions),
 
 metrics <- c("accuracy", "precision", "recall", "fscore", "mcc")
 resultsTable <- metrics_summary(obs = validation_predictions$real,
-                                pred = validation_predictions$label_predicted, 
+                                pred = validation_predictions$label_predicted,
                                 type="classification", pos_level = 2,
                                 metrics_list = metrics)
 rownames(resultsTable) <- resultsTable[,1]
@@ -68,7 +68,7 @@ for (MLModel in c("SVM", "FNN",  "RF", "LDA", "KNN", "LR", "DT", "NB")) {
     validation_predictions <- read.delim(paste0("SLE/results_SLE/", MLModel, "_Whole/pediatrics_prediction.tsv"), row.names = 1)
     validation_predictions$real <- validation_real[rownames(validation_predictions), "StatusInt"]
     resultsModel <- metrics_summary(obs = validation_predictions$real,
-                                    pred = validation_predictions$label_predicted, 
+                                    pred = validation_predictions$label_predicted,
                                     type="classification", pos_level = 2,
                                     metrics_list = metrics)
     rownames(resultsModel) <- resultsModel[,1]
@@ -83,12 +83,12 @@ resultsExternal <- do.call(cbind, resultsExternal)
 perfMergedExternal <- data.frame(cbind(resultsTable, resultsExternal))
 colnames(perfMergedExternal) <- c("singleDeep",  "SVM", "FNN",  "RF", "LDA", "KNN", "LR", "DT", "NB", "CloudPred", "ProtoCell4P", "ScRAT")
 rownames(perfMergedExternal) <- c("Accuracy", "Precision", "Recall", "F1", "MCC", "normMCC")
-perfMergedExternal <- perfMergedExternal[c("MCC", "normMCC", "Accuracy", "Precision", "Recall", "F1"), 
+perfMergedExternal <- perfMergedExternal[c("MCC", "normMCC", "Accuracy", "Precision", "Recall", "F1"),
                                          c("singleDeep", "CloudPred", "ProtoCell4P", "ScRAT", "SVM", "FNN",  "RF", "LDA", "KNN", "LR", "DT", "NB")]
 
 write.table(round(perfMergedExternal, 2), "SLE/Table1.tsv", sep = "\t", quote = F, col.names = NA)
 
-# singleDeep performance by cell type - Figure 2b -------------------------
+# singleDeep performance by cell type - Supplementary Figure 1b -------------------------
 
 MCCClust <- read.delim("SLE/results_SLE/Status_clusterResults.tsv", row.names = 1)[,"MCC",drop=F]
 cellTypes <- rownames(MCCClust)[order(MCCClust$MCC, decreasing = T)]
@@ -122,10 +122,10 @@ p <- ggplot(dat, aes(x=ind, y=values, fill=values)) +
     theme_classic() +
     theme(legend.position = "none", axis.text.x=element_text(angle=90, vjust=0.5, hjust = 0.95))
 
-ggsave("figures/figure2b.pdf", p, scale=1.2, width = 3.5, height = 2.6)
+ggsave("figures/SupplFigure1b.pdf", p, scale=1.2, width = 3.5, height = 2.6)
 
 
-# Heatmap of gene contributions across cell types - Figure 2c -------------
+# Heatmap of gene contributions across cell types - Figure 2a -------------
 
 pseudobulkSLE <- read.delim("SLE/data/Science/pseudobulk_Science_raw_sum.tsv", check.names = F, row.names = 1)
 
@@ -178,4 +178,4 @@ for (cellType in cellTypesTop) {
 pheatmap(-genesSLERank[selectedGenes,], cluster_cols = F, cluster_rows = F,
          color = paletteer_d("beyonce::X39"), border_color = "black",
          angle_col = 90, width = 2.5, height = 4.93, legend = F, fontsize = 7,
-         filename = "figures/figure2c.pdf")
+         filename = "figures/figure2a.pdf")

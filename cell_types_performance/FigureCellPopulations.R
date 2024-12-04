@@ -12,7 +12,7 @@ package.check <- lapply(
 )
 
 
-# Correlation performance, # Cells and cell types ratio - Figure 3a -------
+# Correlation performance, # Cells and cell types ratio - Figure 2b -------
 
 MCCClust <- read.delim("SLE/results_SLE/Status_clusterResults.tsv", row.names = 1)[,"MCC",drop=F]
 cellTypes <- rownames(MCCClust)[order(MCCClust$MCC, decreasing = T)]
@@ -38,23 +38,23 @@ p <- ggplot(df, aes(x = x, y = y, fill = N)) +
     ylab("MCC") +
     ylim(min(df$y), 0.8)+
     theme_classic() +
-    theme(legend.position = c(0, 1), 
+    theme(legend.position = c(0, 1),
           legend.justification = c("left", "top"),
           legend.key.size = unit(0.05, "npc"),
           text=element_text(size=16)) +
     scale_fill_gradient(low = "yellow", high = "red") +
     labs(fill = "Healthy/SLE ratio")
 
-ggsave("figures/figure3a.pdf", p, scale=2.5, width = 2.05, height = 1.5)
+ggsave("figures/figure2b.pdf", p, scale=2.5, width = 2.05, height = 1.5)
 
 
 
-# In silico analysis - Figure 3b ------------------------------------------
+# In silico analysis - Figure 2c ------------------------------------------
 
 iterationsList <- as.character(seq(10))
 simulationResults <- list()
 for (iteration in iterationsList) {
-    simulationResults[[iteration]] <- read.delim(paste0("cell_types_performance/results_simulation/results_simulation_", iteration, 
+    simulationResults[[iteration]] <- read.delim(paste0("cell_types_performance/results_simulation/results_simulation_", iteration,
                                                       "/Condition_clusterResults.tsv"), row.names = 1)[,"MCC", drop = FALSE]
 }
 
@@ -81,18 +81,18 @@ p <- ggplot(datLineplot) + aes(x=ind, y=meansimulation, ymin=lowerLim, ymax=uppe
     theme_classic() +
     theme(legend.title = element_blank(), text=element_text(size=16))
 
-ggsave("figures/figure3b.pdf", p, scale=2.5, width = 2.05, height = 1.5)
+ggsave("figures/figure2c.pdf", p, scale=2.5, width = 2.05, height = 1.5)
 
 
-# Ablation analysis - Figure 3c -------------------------------------------
+# Ablation analysis - Figure 2d -------------------------------------------
 
 NCellsList <- paste(c("30000", "25000", "20000", "15000", "10000", "5000"), rep(seq(10), each=6), sep = "_")
 NCellsResults <- list()
 for (NCells in NCellsList) {
-    NCellsResults[[NCells]] <- read.delim(paste0("cell_types_performance/ablation/results_ablat_N", 
-                                                 NCells, "/Status_clusterResults.tsv"), 
+    NCellsResults[[NCells]] <- read.delim(paste0("cell_types_performance/ablation/results_ablat_N",
+                                                 NCells, "/Status_clusterResults.tsv"),
                                           row.names = 1)[,"MCC", drop = FALSE]
-    
+
 }
 
 NCellsResults <- do.call(cbind, NCellsResults)
@@ -123,4 +123,4 @@ p <- ggplot(melted_NCellsResults, aes(x = Var1, y = value, group = Var2, color =
     guides(color="none")+
     theme(text=element_text(size=16))
 
-ggsave("figures/figure3c.pdf", p, scale=2.5, width = 2.05, height = 1.5)
+ggsave("figures/figure2d.pdf", p, scale=2.5, width = 2.05, height = 1.5)

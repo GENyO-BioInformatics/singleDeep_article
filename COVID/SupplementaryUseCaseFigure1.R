@@ -66,7 +66,7 @@ p <- ggplot(df1, aes(x=cellTypesTop, y=selectedGenes, size=Rank, color=Sign)) +
     scale_x_discrete(limits = clusters_order) +
     scale_y_discrete(limits = rev(feature_order)) +
     theme_bw() +
-    annotate("rect", xmin=0,xmax=5.5,ymin=-Inf,ymax=Inf, 
+    annotate("rect", xmin=0,xmax=5.5,ymin=-Inf,ymax=Inf,
              fill="#8DD3C7", alpha=0.2, color=NA) +
     annotate("rect",xmin=5.5,xmax=6.5,ymin=-Inf,ymax=Inf,
              fill="#FFFFB3", alpha=0.2, color=NA) +
@@ -86,7 +86,7 @@ p <- ggplot(df1, aes(x=cellTypesTop, y=selectedGenes, size=Rank, color=Sign)) +
           axis.title.x = element_blank(), axis.title.y = element_blank(),
           legend.position="top")
 
-ggsave("figures/SupplementaryFigure1a.pdf", p, width=1200, height=1200, units="px", scale=5)
+ggsave("figures/SupplementaryUseCaseFigure1a.pdf", p, width=1200, height=1200, units="px", scale=5)
 
 
 # Enrichment analysis - Supplementary Figure 1b -----------------------------------------
@@ -131,9 +131,9 @@ p <- ggplot(enrichmentResults, aes(x=logp, y=description, color=relative_enrichm
     scale_color_continuous(low="red", high="blue", name = "Relative\nEnrichment",
                            guide=guide_colorbar(reverse=TRUE)) +
     scale_y_discrete(limits = rev(feature_order)) +
-    ylab(NULL) + 
+    ylab(NULL) +
     scale_size(range=c(3, 15)) +
     theme(text = element_text(size = 30),
           legend.position="top")
 
-ggsave("figures/SupplementaryFigure1b.pdf", p, width=1000, height=1200, units="px", scale=5)
+ggsave("figures/SupplementaryUseCaseFigure1b.pdf", p, width=1000, height=1200, units="px", scale=5)

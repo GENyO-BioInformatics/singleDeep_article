@@ -61,13 +61,13 @@ Machine learning models are used to perform the same classifications on pseudobu
 bash SLE/run_ML_SLE.sh
 ```
 
-Run the script Figure2.R to generate the Figure 2 from the article.
+Run the script FiguresSLE.R to generate the Supplementary Figure 1 and Figure 2a from the article.
 
 ``` bash
-RScript SLE/Figure2.R
+RScript SLE/FiguresSLE.R
 ```
 
-Figure 2 panels will be saved in the figures folder.
+The plots will be saved in the figures folder.
 
 ## Factors influencing cell types performance
 
@@ -97,13 +97,13 @@ bash cell_types_performance/run_ablation.sh
 
 The results for each dataset will be stored in the ablation folder.
 
-To generate the Figure 3 from this section results, run:
+To generate the Figure 2b-d from this section results, run:
 
 ```{bash}
-Rscript cell_types_performance/Figure3.R
+Rscript cell_types_performance/FigureCellPopulations.R
 ```
 
-Figure 3a, 3b and 3c will be saved in the figures folder.
+Figure 2b, 2c and 2d will be saved in the figures folder.
 
 ## Dementia
 
@@ -131,10 +131,10 @@ Prepare the data for plotting:
 Rscript Dementia/preparePlot.R
 ```
 
-Run the script *Dementia/Figure4.py* to generate the Figure 4 into the figures folder:
+Run the script *Dementia/Figure3.py* to generate the Figure 4 into the figures folder:
 
 ``` bash
-python Dementia/Figure4.py
+python Dementia/Figure3.py
 ```
 
 ## COVID-19 (Supplementary use case)
@@ -161,10 +161,10 @@ python singleDeep/singleDeep.py --inPath ./COVID/data/ --sampleColumn sampleID -
 python singleDeep/singleDeep.py --inPath ./COVID/data/ --sampleColumn sampleID --logPath ./COVID/log_COVIDStatus --resultsPath ./COVID/results_COVIDStatus/ --varColumn SARS-CoV-2 --targetClass 1 --num_epochs 500 --resultsFilenames Status --KOuter 3 --KInner 3
 ```
 
-Run the script *COVID/SupplementaryFigure1.R* to generate the Supplementary Figure 1a and 1b into the figures folder:
+Run the script *COVID/SupplementaryUseCaseFigure1.R* to generate the Supplementary Use Case Figure 1a and 1b into the figures folder:
 
 ``` bash
-Rscript COVID/SupplementaryFigure1.R
+Rscript COVID/SupplementaryUseCaseFigure1.R
 ```
 
 ## 
